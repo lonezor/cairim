@@ -12,6 +12,8 @@ public:
 
     void draw(frame_context& fc, double scene_width, double scene_height);
 
+    void draw_rotated_svg_surface(double x_center, double y_center, double angle);
+
     bool intersects(double x, double y);
    // bool intersects(const object& other);
 

@@ -83,5 +83,8 @@ void cairo_svg_surface::read_from_svg_file(std::string path)
 
     // Render SVG to cairo surface
     rsvg_handle_render_cairo (rsvg_, cr_);
+
+    auto w =  cairo_image_surface_get_width (surface_);
+    auto h = cairo_image_surface_get_height (surface_);
 }
 

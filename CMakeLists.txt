@@ -19,7 +19,9 @@ add_executable(cairim
   src/cairo_xlib_window.cpp
   src/timer.cpp
   src/main.cpp
+  src/test.cpp
 )
+
 
 target_link_libraries(cairim
 ${CAIRO_LIBRARIES}

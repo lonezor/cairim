@@ -10,7 +10,7 @@ scene::scene(double width, double height, std::shared_ptr<rendering_context> rc,
 , rc_(rc)
 , level_of_detail_(level_of_detail)
 {
-        objects_.emplace_back(object(100,100,500, 500, rc_));
+        objects_.emplace_back(object(width/2,height/2,width/2, height/2, rc_));
 }
 
 scene::~scene()
