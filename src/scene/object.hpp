@@ -2,6 +2,7 @@
 
 #include "rendering_context.hpp"
 #include "frame_context.hpp"
+#include "cairo_svg_surface.hpp"
 #include <memory>
 
 class object
@@ -19,11 +20,6 @@ private:
     double y_;
     double width_;
     double height_;
-    double x_velocity_{1};
-    double y_velocity_{1};
     std::shared_ptr<rendering_context> rc_;
-    double r_{0};
-    double g_{0};
-    double b_{1};
-    double rnd_{0};
+    cairo_svg_surface* svg_surface_;
 };

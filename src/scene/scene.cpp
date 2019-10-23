@@ -10,15 +10,7 @@ scene::scene(double width, double height, std::shared_ptr<rendering_context> rc,
 , rc_(rc)
 , level_of_detail_(level_of_detail)
 {
-    double sz = 1;
-    if (level_of_detail_ < 1000) {
-        sz = 10;
-    }
-
-    for(int i=0; i<10 * (int)level_of_detail_;i++) {
-        objects_.emplace_back(object(drand48() * width_, drand48() * height_, drand48()*0.5*sz, drand48()*0.5*sz, rc_));
-    }
-    std::cout << "Number of particles: " << objects_.size() << std::endl;
+        objects_.emplace_back(object(100,100,500, 500, rc_));
 }
 
 scene::~scene()

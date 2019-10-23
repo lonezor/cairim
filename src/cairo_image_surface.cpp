@@ -25,3 +25,8 @@ cairo_t* cairo_image_surface::get_context()
 {
     return ctx_;
 }
+
+cairo_surface_t* cairo_image_surface::get_surface()
+{
+    return surface_;
+}

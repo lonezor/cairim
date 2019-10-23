@@ -11,6 +11,10 @@ public:
     ~cairo_image_surface();
 
     cairo_t* get_context();
+
+cairo_surface_t* get_surface();
+
+
     void write_png(std::string path);
 
 private:

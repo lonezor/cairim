@@ -99,6 +99,11 @@ cairo_t* cairo_xlib_window::get_context()
     return ctx_;
 }
 
+cairo_surface_t* cairo_xlib_window::get_surface()
+{
+    return surface_;
+}
+
 std::vector<std::shared_ptr<window_event>> cairo_xlib_window::poll_events()
 {
   XEvent event;

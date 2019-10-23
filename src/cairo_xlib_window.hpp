@@ -65,6 +65,7 @@ public:
     ~cairo_xlib_window();
 
     cairo_t* get_context();
+    cairo_surface_t* get_surface();
 
     std::vector<std::shared_ptr<window_event>> poll_events();
 

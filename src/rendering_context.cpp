@@ -1,11 +1,31 @@
 #include "rendering_context.hpp"
 
-rendering_context::rendering_context(cairo_t* cr, int screen_width, int screen_height, int ref_width, int ref_height, anti_aliasing anti_aliasing)
- : cr_(cr)
+rendering_context::rendering_context(cairo_surface_t* surface, cairo_t* cr, int screen_width, int screen_height, int ref_width, int ref_height, anti_aliasing anti_aliasing)
+ : surface_(surface)
+ , cr_(cr)
  , screen_width_(screen_width)
  , screen_height_(screen_height)
  , ref_width_(ref_width)
  , ref_height_(ref_height)
+ , anti_aliasing_(anti_aliasing)
+{
+    init(anti_aliasing);
+}
+
+rendering_context::rendering_context(cairo_surface_t* surface, cairo_t* cr, rendering_context& reference)
+ : surface_(surface)
+ , cr_(cr)
+{
+    screen_width_ = reference.get_screen_width();
+    screen_height_  = reference.get_screen_height();
+    ref_width_ = reference.get_ref_width();
+    ref_height_ = reference.get_ref_height();
+    anti_aliasing_ = reference.get_anti_aliasing();
+
+    init(anti_aliasing_);
+}
+
+void rendering_context::init(anti_aliasing anti_aliasing)
 {
     cairo_antialias_t cr_antialias;
     switch(anti_aliasing) {
@@ -22,6 +42,41 @@ rendering_context::rendering_context(cairo_t* cr, int screen_width, int screen_h
     cairo_set_antialias(cr_, cr_antialias);
 
     font_face("DejaVu Sans Book", font_slant::normal, font_weight::normal);
+}
+
+cairo_t* rendering_context::get_ctx()
+{
+    return cr_;
+}
+
+cairo_surface_t* rendering_context::get_surface()
+{
+    return surface_;
+}
+
+int rendering_context::get_screen_width()
+{
+    return screen_width_;
+}
+
+int rendering_context::get_screen_height()
+{
+    return screen_height_;
+}
+
+int rendering_context::get_ref_width()
+{
+    return ref_width_;
+}
+
+int rendering_context::get_ref_height()
+{
+    return ref_height_;
+}
+
+anti_aliasing rendering_context::get_anti_aliasing()
+{
+    return anti_aliasing_;
 }
 
 void rendering_context::set_source_rgb(double r, double g, double b)
@@ -104,6 +159,16 @@ void rendering_context::show_text(std::string text)
     cairo_show_text(cr_, text.c_str());
 }
 
+void rendering_context::rotate(double angle)
+{
+    cairo_rotate(cr_, angle);
+}
+
+void rendering_context::translate(double tx, double ty)
+{
+    cairo_translate(cr_, scale(tx), scale(ty));
+}
+
 void rendering_context::fill()
 {
     cairo_fill(cr_);
@@ -127,6 +192,18 @@ void rendering_context::push_group()
 void rendering_context::pop_group_to_source()
 {
     cairo_pop_group_to_source(cr_);
+}
+
+void rendering_context::draw_rc(rendering_context& rc, double x, double y)
+{
+    cairo_set_source_surface (cr_, rc.get_surface(), x, y);
+    cairo_paint (cr_);
+}
+
+void rendering_context::draw_surface(cairo_surface_t* surface, double x, double y)
+{
+    cairo_set_source_surface (cr_, surface, x, y);
+    cairo_paint (cr_);
 }
 
 void rendering_context::write_png(std::string path)
