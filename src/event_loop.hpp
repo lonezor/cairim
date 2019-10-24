@@ -52,11 +52,9 @@ private:
     void on_leave(window_event& e);
     void on_close(window_event& e);
 
-    void draw_background();
-    void draw_main();
-    void draw_foreground();
-
     void draw();
+    void draw_scene(frame_context& fc);
+
     std::chrono::milliseconds rate_to_ms_period(double rate);
 
     std::shared_ptr<cairo_xlib_window> window_;

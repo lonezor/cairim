@@ -214,6 +214,7 @@ void rendering_context::write_png(std::string path)
 double rendering_context::scale(double value)
 {
     // Assumption: using the same aspect ratio
-    double multiplier = screen_width_ / ref_width_;
-    return value * multiplier;
+    double multiplier = static_cast<double>(screen_width_) / static_cast<double>(ref_width_);
+    double res = value * multiplier;
+    return res;
 }

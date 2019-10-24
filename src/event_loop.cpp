@@ -27,6 +27,7 @@ event_loop::event_loop(double target_frame_rate,
     register_refresh_timer();
     register_timestamp_timer();
 
+    elapsed_time_ = "00:00:00:00";
     
 
   
@@ -237,14 +238,13 @@ void event_loop::on_close(window_event& e)
     exit_ = true;
 }
 
-void event_loop::draw_background()
+void event_loop::draw_scene(frame_context& fc)
 {
-    // Black background
-    rc_->set_source_rgb(0, 0, 0);
-    rc_->paint();
+    scene_->draw(fc);
+    capture_vector_.emplace_back(fc);
 }
 
-void event_loop::draw_main()
+void event_loop::draw()
 {
     frame_context fc;
     memset(&fc, 0, sizeof(fc));
@@ -253,60 +253,16 @@ void event_loop::draw_main()
     fc.delta_time = delta_time_;
     fc.cursor_x = cursor_x_;
     fc.cursor_y = cursor_y_;
+    fc.cursor_visible = cursor_visible_;
+    fc.osd_visible = true;
+    fc.screen_border = true;
     fc.button_pressed = button_pressed_;
-    
-    scene_->draw(fc);
-    capture_vector_.emplace_back(fc);
-}
+    fc.frame_rate = frame_rate_;
+    fc.elapsed_time = elapsed_time_;
 
-void event_loop::draw_foreground()
-{
-    // Debug info
-    rc_->set_source_rgba(1, 1, 1, 1);
-    std::ostringstream oss;
-    oss << std::fixed << std::setprecision(0);
-    oss << "fps: " << frame_rate_;
-    oss << ", elapsed time: " << elapsed_time_;
-    
-    rc_->move_to(10,15);
-    rc_->font_size(12);
-    rc_->show_text(oss.str());
-
-    // Mouse cursor
-    if (cursor_visible_) {
-        double radius = 8;
-        double alpha = 0.5;
-        double gray = 0.4;
-        if (button_pressed_) {
-            radius = 9;
-            alpha = 0.8;
-            gray = 0.8;
-        }
-
-        rc_->set_source_rgba(gray, gray, gray, alpha);
-        rc_->arc(cursor_x_, cursor_y_, radius, 0, 2 * m_pi);
-        rc_->fill();
-
-        rc_->set_source_rgba(1, 0, 0, alpha);
-        rc_->arc(cursor_x_, cursor_y_, radius, 0, 2 * m_pi);
-        rc_->stroke();
-
-
-    }
-}
-
-void event_loop::draw()
-{
     int64_t ts1 = get_ts();
     
-    rc_->push_group();
-
-    draw_background();
-    draw_main();
-    draw_foreground(); // OSD and cursor
-
-    rc_->pop_group_to_source();
-    rc_->paint();
+    draw_scene(fc);
 
     auto ts2 = get_ts();
     auto diff = ts2 - ts1;

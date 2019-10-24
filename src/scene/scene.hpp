@@ -18,11 +18,19 @@ public:
 
     void draw(frame_context& fc);
 
+
+
 private:
     std::shared_ptr<rendering_context> rc_;
     double width_;
     double height_;
     double level_of_detail_;
+
+    void draw_begin();
+    void draw_bg();
+    void draw_main(frame_context& fc);
+    void draw_fg(frame_context& fc);
+    void draw_end();
 
     std::vector<object> objects_;
     

@@ -13,44 +13,48 @@ object::object(double x, double y, double width, double height, std::shared_ptr<
 {
     // Load SVG and render it with high DPI and scale it down based on current need (heavy operation)
     svg_surface_ = new cairo_svg_surface("/home/lonezor/project/cairim/svg/low_detail/water_wheel.svg", 
-        width_, height_);
+        rc_->scale(width_), rc_->scale(height_));
 }
 
-void object::draw_rotated_svg_surface(double x, double y, double angle)
+void object::draw_svg_surface(double x, double y, double angle)
 {
     auto cr = rc_->get_ctx();
-cairo_save(cr);
 
-cairo_matrix_t matrix;
+    // Restoration point before transformations
+    cairo_save(cr);
 
-cairo_matrix_init(&matrix,
-1,
-0,
-0,
-1,
-0,
-0);
+    // Initialise matrix
+    cairo_matrix_t matrix;
+    cairo_matrix_init(&matrix,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0);
 
-// Final results
-cairo_matrix_translate(&matrix,
-                        x/2,
-                        y/2);
+    // Translation to target coordinates
+    cairo_matrix_translate(&matrix,
+                            rc_->scale(x)/2,
+                            rc_->scale(y)/2);
+    cairo_transform (cr, &matrix);
 
-cairo_transform (cr, &matrix);
+    // Rotation around center of object
+    cairo_matrix_rotate (&matrix, angle);
+    cairo_transform (cr, &matrix);
 
-cairo_matrix_rotate (&matrix, angle);
+    // Render SVG surface 
+    rc_->draw_surface(svg_surface_->get_surface(), -svg_surface_->get_center_x() , -svg_surface_->get_center_y());
 
-cairo_transform (cr, &matrix);
-
-rc_->draw_surface(svg_surface_->get_surface(), -svg_surface_->get_center_x() , -svg_surface_->get_center_y());
-
-cairo_restore(cr);
+    // Revert transformation settings
+    cairo_restore(cr);
 }
 
-void object::draw(frame_context& fc, double scene_width, double scene_height)
+void object::draw(frame_context& fc)
 {
     static double rate = 0.001;
     if (intersects(fc.cursor_x, fc.cursor_y)) {
+        
         if (fc.button_pressed) {
             rate -= 0.0001;
         }
@@ -58,27 +62,31 @@ void object::draw(frame_context& fc, double scene_width, double scene_height)
         rate = 0.001;
     }
 
-
-
 static double a = 0;
 a -= rate;
 if (a < 0){
     a = 1;
 }
 
-draw_rotated_svg_surface(x_, y_, a * 2 * m_pi);
+draw_svg_surface(x_, y_, a * 2 * m_pi);
 
 
 }
 
 bool object::intersects(double x, double y)
 {
-    double comp_x = x_ - svg_surface_->get_center_x();
-    double comp_y = y_ - svg_surface_->get_center_y();
- 
-    return ((rc_->scale(x) >= comp_x && rc_->scale(x) <= comp_x + width_) &&
-            (rc_->scale(y) >= comp_y && rc_->scale(y) <= comp_y + height_));
+    // Determine object intersection with cursor
+    // Compensate for scaling (replay)
+    double sf = rc_->scale(1);
 
+    x *= sf;
+    y *= sf;
+    
+    double comp_x = x_*sf - svg_surface_->get_center_x();
+    double comp_y = y_*sf - svg_surface_->get_center_y();
+ 
+    return ((x >= comp_x && x <= comp_x + width_*sf) &&
+            (y >= comp_y && y <= comp_y + height_*sf));
 }
 
 //bool object::intersects(const object& other)

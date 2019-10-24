@@ -6,15 +6,18 @@
 #include "rendering_context.hpp"
 #include "scene/scene.hpp"
 
-#define WIDTH  (1024)
-#define HEIGHT  (768)
+#define CAPTURE_WIDTH  (720)
+#define CAPTURE_HEIGHT  (405)
+
+#define REPLAY_WIDTH (3840)
+#define REPLAY_HEIGHT (2160)
 
 int main(int argc, char* argv[])
 {
-    int width = WIDTH;
-    int height = HEIGHT;
-    int ref_width = WIDTH;
-    int ref_height = HEIGHT;
+    int width = CAPTURE_WIDTH;
+    int height = CAPTURE_HEIGHT;
+    int ref_width = CAPTURE_WIDTH;
+    int ref_height = CAPTURE_HEIGHT;
     int x_pos = 200;
     int y_pos = 200;
     int target_framerate = 60;
@@ -31,11 +34,11 @@ int main(int argc, char* argv[])
     window->close();
 
     if (!capture_vector.empty()) {
-        width = 3840;
-        height = 2160;
+        width = REPLAY_WIDTH;
+        height = REPLAY_HEIGHT;
         auto image = cairo_image_surface(width, height);
         auto rc2 = std::shared_ptr<rendering_context>(new rendering_context(image.get_surface(), image.get_context(), width, height, ref_width, ref_height, anti_aliasing::best));
-        auto wma_replay_scene = std::shared_ptr<scene>(new scene(width, height, rc2, 500000));
+        auto wma_replay_scene = std::shared_ptr<scene>(new scene(CAPTURE_WIDTH, CAPTURE_HEIGHT, rc2, 500000));
         int i = 0;
         for (auto&& frame : capture_vector) {
             char path[1024];
