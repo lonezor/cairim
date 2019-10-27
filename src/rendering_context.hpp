@@ -35,16 +35,18 @@ public:
     
     void init(anti_aliasing anti_aliasing);
 
-cairo_surface_t* get_surface();
+    cairo_surface_t* get_surface();
     cairo_t* get_ctx();
-    
     int get_screen_width();
     int get_screen_height();
     int get_ref_width();
     int get_ref_height();
     anti_aliasing get_anti_aliasing();
 
-
+    // State
+    void save();
+    void restore();
+    
     // Attributes
     void set_source_rgb(double r, double g, double b);
     void set_source_rgba(double r, double g, double b, double a);
@@ -65,6 +67,20 @@ cairo_surface_t* get_surface();
     // Transformations
     void rotate(double angle);
     void translate (double tx, double ty);
+    void matrix_init(cairo_matrix_t* matrix,
+                        double xx,
+                        double yx,
+                        double xy,
+                        double yy,
+                        double x0,
+                        double y0);
+
+    void matrix_translate (cairo_matrix_t* matrix,
+                            double tx,
+                            double ty);
+    void matrix_rotate (cairo_matrix_t* matrix,
+                        double radians);
+    void transform(const cairo_matrix_t* matrix);
 
     // Drawing
     void fill();
@@ -77,8 +93,8 @@ cairo_surface_t* get_surface();
     void draw_rc(rendering_context& rc, double x, double y);
     void draw_surface(cairo_surface_t* surface, double x, double y);
 
-    // Image file generation
     void write_png(std::string path);
+
 
     double scale(double value);
 

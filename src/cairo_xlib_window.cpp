@@ -7,6 +7,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <X11/X.h>
+#include <iostream>
 
 cairo_xlib_window::cairo_xlib_window(int width, int height, int xpos, int ypos, std::string title, bool fullscreen)
 : width_(width)
@@ -136,17 +137,47 @@ std::vector<std::shared_ptr<window_event>> cairo_xlib_window::poll_events()
             events.emplace_back(e);
             break;
         }
-        case ButtonPress: {
-            auto e = std::shared_ptr<window_event>(new window_event(window_event_type::button_press,
-                                  event.xbutton.x,
-                                  event.xbutton.y));
-            events.emplace_back(e);
-            break;
-        }
+        case ButtonPress:
         case ButtonRelease: {
-            auto e = std::shared_ptr<window_event>(new window_event(window_event_type::button_release,
+            bool pressed = (event.type == ButtonPress);
+            switch (event.xbutton.button) {
+                case 1:
+                    button_event(button::left, pressed); 
+                    break;
+                case 2:
+                    button_event(button::middle, pressed); // (scroll wheel pressed)
+                    break;
+                case 3:
+                    button_event(button::right, pressed);
+                    break;
+                case 4:
+                    button_event(button::scroll_up, pressed);
+                    break;
+                case 5:
+                    button_event(button::scroll_down, pressed);
+                    break;
+                case 6:
+                    button_event(button::scroll_left, pressed);
+                    break;
+                case 7:
+                    button_event(button::scroll_right, pressed);
+                    break;
+                case 8:
+                    button_event(button::nav_back, pressed);
+                    break;
+                case 9:
+                    button_event(button::nav_forward, pressed);
+                    break;
+                default:
+                    std::cerr << "Unknown xbutton.button" << std::endl;
+                    continue;
+            }
+            window_event_type window_event_type = event.type == ButtonPress ? 
+                window_event_type::button_press : window_event_type::button_release;
+            auto e = std::shared_ptr<window_event>(new window_event(window_event_type,
                                   event.xbutton.x,
-                                  event.xbutton.y));
+                                  event.xbutton.y,
+                                  button_state_));
             events.emplace_back(e);
             break;
         }
@@ -212,3 +243,13 @@ void cairo_xlib_window::close()
         closed_ = true;
     }
 }
+
+void cairo_xlib_window::button_event(button flag, bool pressed)
+{
+    if (pressed) {
+        button_state_ |= flag;
+    } else {
+        button_state_ &= ~flag;
+    }
+}
+

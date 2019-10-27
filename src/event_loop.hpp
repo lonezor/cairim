@@ -5,6 +5,7 @@
 #include "cairo_xlib_window.hpp"
 #include "rendering_context.hpp"
 #include "scene.hpp"
+#include "button.hpp"
 
 #include <unordered_map>
 #include <chrono>
@@ -14,7 +15,6 @@ enum class event_type
 {
     poll_input_device,
     refresh_screen,
-    refresh_timestamp,
 };
 
 using event_id = uint64_t;
@@ -35,10 +35,8 @@ private:
 
     void register_refresh_timer();
     void register_input_device_timer();
-    void register_timestamp_timer();
     void on_poll_input_device();
     void on_refresh_screen();
-    void on_refresh_timestamp();
 
     void on_expose(window_event& e);
     void on_pointer_motion(window_event& e);
@@ -57,6 +55,8 @@ private:
 
     std::chrono::milliseconds rate_to_ms_period(double rate);
 
+    int64_t get_ts();
+
     std::shared_ptr<cairo_xlib_window> window_;
     std::shared_ptr<rendering_context> rc_;
     std::shared_ptr<scene> scene_;
@@ -66,17 +66,15 @@ private:
     double target_frame_rate_;
     double frame_rate_{0};
     double window_event_poll_rate_;
-    bool button_pressed_{false};
+    button button_state_{button::none};
     double cursor_x_{0};
     double cursor_y_{0};
     bool exit_{false};
     bool cursor_visible_{false};
     
-    int64_t started_ts_{0};
-    std::string elapsed_time_;
-
-    double get_ts();
     uint64_t frame_{0};
-    double delta_time_{0};
+    int64_t started_ts_{0};
+    int64_t delta_time_{0};
+    int64_t total_time_{0};
 
 };

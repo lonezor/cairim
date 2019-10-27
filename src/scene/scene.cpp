@@ -7,13 +7,13 @@
 #include <iostream>
 
 scene::scene(double width, double height, std::shared_ptr<rendering_context> rc,
-                double level_of_detail)
+                uint64_t level_of_detail)
 : width_(width)
 , height_(height)
 , rc_(rc)
 , level_of_detail_(level_of_detail)
 {
-        objects_.emplace_back(object(width/2,height/2,width/2, width/2, rc_));
+    objects_.emplace_back(object(width/2,height/2,width/2, width/2, rc_));
 }
 
 scene::~scene()
@@ -69,20 +69,24 @@ void scene::draw_fg(frame_context& fc)
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(0);
         oss << "fps: " << fc.frame_rate;
-        oss << ", elapsed time: " << fc.elapsed_time;
-    
+        oss << ", elapsed time: " << elapsed_time_str(fc.timestamp);
+
         rc_->move_to(10,15);
         rc_->font_size(12);
         rc_->show_text(oss.str());
     }
 
     if (fc.screen_border) {
+
+        auto offset = rc_->scale(0.01);
+        auto one_unit = rc_->scale(1.1);// 8k: 0.3
+
         rc_->set_source_rgba(1, 1, 1, 1);
-        rc_->move_to(0,0);
-        rc_->line_to(fc.scene_width,0);
-        rc_->line_to(fc.scene_width,fc.scene_height);
-        rc_->line_to(0,fc.scene_height);
-        rc_->line_to(0,0);
+        rc_->move_to(offset,offset);
+        rc_->line_to(fc.scene_width - offset, offset);
+        rc_->line_to(fc.scene_width - offset,fc.scene_height - one_unit - offset);
+        rc_->line_to(offset,fc.scene_height - one_unit - offset);
+        rc_->line_to(offset,offset);
         rc_->stroke();
     }
 
@@ -91,7 +95,7 @@ void scene::draw_fg(frame_context& fc)
         double radius = 8;
         double alpha = 0.5;
         double gray = 0.4;
-        if (fc.button_pressed) {
+        if (button_active(fc.button_state, button::left)) {
             radius = 9;
             alpha = 0.8;
             gray = 0.8;
@@ -109,3 +113,33 @@ void scene::draw_fg(frame_context& fc)
 
 
 
+std::string scene::elapsed_time_str(int64_t elapsed_time) {
+    elapsed_time /= 1000000; // to seconds
+
+    auto days = elapsed_time / (3600 * 24);
+    elapsed_time -= days * (3600 * 24);
+    
+    auto hours = elapsed_time / 3600;
+    elapsed_time -= hours * (3600);
+
+    auto minutes = elapsed_time / 60;
+    auto seconds = elapsed_time % 60;
+
+    std::ostringstream oss;
+    oss << std::setfill('0');
+    oss << std::setw(2);
+    oss << days << ":";
+    oss << std::setw(2);
+    oss << hours << ":";
+    oss << std::setw(2);
+    oss << minutes << ":";
+    oss << std::setw(2);
+    oss << seconds;
+
+    return oss.str();
+}
+
+void scene::write_png(std::string path)
+{
+    rc_->write_png(path);
+}

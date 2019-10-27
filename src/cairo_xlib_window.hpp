@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory>
 #include <unistd.h>
+#include <stdint.h>
+#include "button.hpp"
 
 enum class window_event_type
 {
@@ -24,6 +26,10 @@ enum class window_event_type
     close,
 };
 
+
+
+
+
 class window_event
 {
 public:
@@ -33,6 +39,13 @@ public:
    : type_(type)
    , x_(x)
    , y_(y)
+   {}
+
+   window_event(window_event_type type, int x, int y, button button_state)
+   : type_(type)
+   , x_(x)
+   , y_(y)
+   , button_state_(button_state)
    {}
     
    window_event(window_event_type type, char c)
@@ -44,12 +57,14 @@ public:
    int get_x() { return x_;}
    int get_y() { return y_;}
    char get_c() { return c_;}
+   button get_button_state() { return button_state_; }
 
 private:
     window_event_type type_{window_event_type::none};
     int x_{-1};
     int y_{-1};
     char c_{0};
+    button button_state_{button::none};
 };
 
 /*
@@ -69,6 +84,8 @@ public:
 
     std::vector<std::shared_ptr<window_event>> poll_events();
 
+    void button_event(button flag, bool pressed);
+
     void close();
 
 private:
@@ -85,4 +102,5 @@ private:
     cairo_surface_t* surface_{nullptr};
     cairo_t* ctx_{nullptr};
     bool closed_{false};
+    button button_state_{button::none};
 };

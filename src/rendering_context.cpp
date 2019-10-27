@@ -169,6 +169,35 @@ void rendering_context::translate(double tx, double ty)
     cairo_translate(cr_, scale(tx), scale(ty));
 }
 
+void rendering_context::matrix_init(cairo_matrix_t* matrix,
+                    double xx,
+                    double yx,
+                    double xy,
+                    double yy,
+                    double x0,
+                    double y0)
+{
+    cairo_matrix_init(matrix, xx, yx, xy, yy, x0, y0);
+}
+
+void rendering_context::matrix_translate(cairo_matrix_t* matrix,
+                        double tx,
+                        double ty)
+{
+    cairo_matrix_translate(matrix, tx, ty);
+}
+
+void rendering_context::matrix_rotate(cairo_matrix_t* matrix,
+                        double radians)
+{
+    cairo_matrix_rotate(matrix, radians);
+}
+
+void rendering_context::transform(const cairo_matrix_t* matrix)
+{
+    cairo_transform(cr_, matrix);
+}
+
 void rendering_context::fill()
 {
     cairo_fill(cr_);
@@ -206,15 +235,25 @@ void rendering_context::draw_surface(cairo_surface_t* surface, double x, double 
     cairo_paint (cr_);
 }
 
-void rendering_context::write_png(std::string path)
-{
-
-}
-
 double rendering_context::scale(double value)
 {
     // Assumption: using the same aspect ratio
     double multiplier = static_cast<double>(screen_width_) / static_cast<double>(ref_width_);
     double res = value * multiplier;
     return res;
+}
+
+void rendering_context::save()
+{
+    cairo_save(cr_);
+}
+
+void rendering_context::restore()
+{
+    cairo_restore(cr_);
+}
+
+void rendering_context::write_png(std::string path)
+{
+    cairo_surface_write_to_png(surface_, path.c_str());
 }

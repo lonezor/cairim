@@ -17,9 +17,11 @@ add_executable(cairim
   src/scene/object.cpp
   src/rendering_context.cpp
   src/cairo_xlib_window.cpp
+  src/button.cpp
   src/timer.cpp
+  src/capture_handler.cpp
+  src/replay_handler.cpp
   src/main.cpp
-  src/test.cpp
 )
 
 

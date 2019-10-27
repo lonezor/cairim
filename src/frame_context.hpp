@@ -1,11 +1,14 @@
 #pragma once
 
+#include "button.hpp"
+
 #include <stdint.h>
 
 struct frame_context
 {
     uint64_t frame;
-    double delta_time;
+    int64_t timestamp; // unit: microseconds
+    double frame_rate;
     double scene_width;
     double scene_height;
     double cursor_x;
@@ -13,7 +16,5 @@ struct frame_context
     bool cursor_visible;
     bool osd_visible;
     bool screen_border;
-    bool button_pressed;
-    double frame_rate;
-    std::string elapsed_time;
+    button button_state;
 };

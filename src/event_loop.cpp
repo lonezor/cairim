@@ -25,12 +25,6 @@ event_loop::event_loop(double target_frame_rate,
 
     register_input_device_timer();
     register_refresh_timer();
-    register_timestamp_timer();
-
-    elapsed_time_ = "00:00:00:00";
-    
-
-  
 }
 
 event_loop::~event_loop()
@@ -51,9 +45,6 @@ std::vector<frame_context> event_loop::run()
             }
             else if (ev_type == event_type::poll_input_device) {
                 on_poll_input_device();
-            }
-            else if (ev_type == event_type::refresh_timestamp) {
-                on_refresh_timestamp();
             }
             event_map_.erase(id);
         }
@@ -78,43 +69,6 @@ void event_loop::register_input_device_timer()
 {
     auto id = timer_.register_one_shot_timer(rate_to_ms_period(window_event_poll_rate_));
     event_map_[id] = event_type::poll_input_device;
-}
-
-void event_loop::register_timestamp_timer()
-{
-    auto id = timer_.register_one_shot_timer(rate_to_ms_period(2));
-    event_map_[id] = event_type::refresh_timestamp;
-}
-
-void event_loop::on_refresh_timestamp()
-{
-    auto now = get_ts();
-    auto diff = static_cast<int64_t>(now - started_ts_);
-    diff /= 1000000;
-
-    auto days = diff / (3600 * 24);
-    diff -= days * (3600 * 24);
-    
-    auto hours = diff / 3600;
-    diff -= hours * (3600);
-
-    auto minutes = diff / 60;
-    auto seconds = diff % 60;
-
-    std::ostringstream oss;
-    oss << std::setfill('0');
-    oss << std::setw(2);
-    oss << days << ":";
-    oss << std::setw(2);
-    oss << hours << ":";
-    oss << std::setw(2);
-    oss << minutes << ":";
-    oss << std::setw(2);
-    oss << seconds;
-
-    elapsed_time_ = oss.str();
-
-    register_timestamp_timer();
 }
 
 void event_loop::on_poll_input_device()
@@ -187,12 +141,12 @@ void event_loop::on_pointer_motion(window_event& e)
 
 void event_loop::on_button_press(window_event& e)
 {
-    button_pressed_ = true;
+    button_state_ = e.get_button_state();
 }
 
 void event_loop::on_button_release(window_event& e)
 {
-    button_pressed_ = false;
+    button_state_ = e.get_button_state();
 }
 
 void event_loop::on_key_press(window_event& e)
@@ -241,6 +195,8 @@ void event_loop::on_close(window_event& e)
 void event_loop::draw_scene(frame_context& fc)
 {
     scene_->draw(fc);
+    fc.osd_visible = true;
+    fc.screen_border = true;
     capture_vector_.emplace_back(fc);
 }
 
@@ -249,19 +205,18 @@ void event_loop::draw()
     frame_context fc;
     memset(&fc, 0, sizeof(fc));
 
+    auto ts1 = get_ts();
+
     fc.frame = frame_;
-    fc.delta_time = delta_time_;
+    fc.timestamp = ts1 - started_ts_;
     fc.cursor_x = cursor_x_;
     fc.cursor_y = cursor_y_;
     fc.cursor_visible = cursor_visible_;
     fc.osd_visible = true;
     fc.screen_border = true;
-    fc.button_pressed = button_pressed_;
+    fc.button_state = button_state_;
     fc.frame_rate = frame_rate_;
-    fc.elapsed_time = elapsed_time_;
 
-    int64_t ts1 = get_ts();
-    
     draw_scene(fc);
 
     auto ts2 = get_ts();
@@ -286,8 +241,8 @@ void event_loop::draw()
     delta_time_ = diff;
 }
 
-double event_loop::get_ts()
+int64_t event_loop::get_ts()
 {
     auto now = std::chrono::steady_clock::now();
-    return static_cast<double>(std::chrono::time_point_cast<std::chrono::microseconds>(now).time_since_epoch().count());
+    return static_cast<int64_t>(std::chrono::time_point_cast<std::chrono::microseconds>(now).time_since_epoch().count());
 }

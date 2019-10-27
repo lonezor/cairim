@@ -14,13 +14,6 @@ cairo_image_surface::~cairo_image_surface()
     cairo_surface_destroy(surface_);
 }
 
-void cairo_image_surface::write_png(std::string path)
-{
-    
-cairo_surface_write_to_png (surface_,
-                            path.c_str());
-}
-
 cairo_t* cairo_image_surface::get_context()
 {
     return ctx_;
