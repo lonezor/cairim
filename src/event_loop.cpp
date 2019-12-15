@@ -209,7 +209,6 @@ void event_loop::draw()
 
     auto ts1 = get_ts();
 
-    fc.frame = frame_;
     fc.timestamp = ts1 - started_ts_;
     fc.cursor_x = cursor_x_;
     fc.cursor_y = cursor_y_;

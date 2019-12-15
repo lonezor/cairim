@@ -7,7 +7,7 @@ constexpr int capture_width = 720;
 constexpr int capture_height = 408;
 constexpr int window_xpos = 100;
 constexpr int window_ypos = 100;
-constexpr auto window_title = "Water Mill Animation";
+constexpr auto window_title = "Cairim";
 
 // The scaling size is conceptually detached from capture size to allow
 // a scenario with rendering without captured user input
@@ -32,3 +32,8 @@ constexpr uint64_t level_of_detail_min = 1;
 constexpr uint64_t level_of_detail_max = 1000000;
 constexpr uint64_t level_of_detail_capture = 1000;
 constexpr uint64_t level_of_detail_replay = 500000;
+
+constexpr auto default_output_dir = "/tmp/cairim/";
+constexpr auto default_capture_file = "default.cap";
+
+constexpr uint64_t capture_file_magic = 0xf5b24398771e0201;

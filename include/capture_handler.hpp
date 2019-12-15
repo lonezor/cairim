@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <string>
+
 #include "frame_context.hpp"
 #include "common.hpp"
 #include "scene.hpp"
@@ -17,8 +19,8 @@ public:
 
     std::vector<frame_context> run();
 
-    //void write_capture_file(std::string path);
-    //std::vector<frame_context> read_capture_file((std::string path);
+    void write_capture_file(std::vector<frame_context>& frame_ctx_vector, std::string path);
+    std::vector<frame_context> read_capture_file(std::string path);
 private:
     std::shared_ptr<scene> scene_;
     std::shared_ptr<cairo_xlib_window> window_;
