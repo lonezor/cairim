@@ -3,17 +3,17 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-object::object(double x, double y, double width, double height, std::shared_ptr<rendering_context> rc)
+object::object(double x, double y, double width, double height, std::shared_ptr<rendering_context> rc, std::string svg_path)
  : x_(x)
  , y_(y)
  , width_(width)
  , height_(height)
  , rc_(rc)
+ , svg_path_(svg_path)
 {
     // Load SVG and render it with high DPI and scale it down based on current need (heavy operation)
     // Scale width/height since cairo operations are delegated to third library instead of rendering ctx
-    svg_surface_ = new cairo_svg_surface("/home/lonezor/project/cairim/svg/low_detail/water_wheel.svg", 
-        rc_->scale(width_), rc_->scale(height_));
+    svg_surface_ = new cairo_svg_surface(svg_path, rc_->scale(width_), rc_->scale(height_));
 }
 
 void object::draw_svg_surface(double x, double y, double angle)
@@ -46,33 +46,6 @@ void object::draw_svg_surface(double x, double y, double angle)
 
     // Revert transformation settings
     rc_->restore();
-}
-
-void object::draw(frame_context& fc)
-{
-    static double rate = 0.001;
-    if (intersects(fc.cursor_x, fc.cursor_y)) {
-        
-        if (button_active(fc.button_state, button::left)) {
-            rate -= 0.0001;
-        }
-        if (button_active(fc.button_state, button::right)) {
-            x_ = fc.cursor_x;
-            y_ = fc.cursor_y;
-        }
-    } else {
-        rate = 0.001;
-    }
-
-static double a = 0;
-a -= rate;
-if (a < 0){
-    a = 1;
-}
-
-draw_svg_surface(x_, y_, a * 2 * m_pi);
-
-
 }
 
 bool object::intersects(double x, double y)

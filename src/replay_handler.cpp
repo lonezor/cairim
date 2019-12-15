@@ -2,15 +2,16 @@
 
 #include "cairo_image_surface.hpp"
 #include "rendering_context.hpp"
-#include "scene/scene.hpp"
+#include "scene.hpp"
 #include "common.hpp"
 
-replay_handler::replay_handler()
+replay_handler::replay_handler(std::shared_ptr<scene> scene)
+ : scene_(scene)
 {
 
 }
 
-void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, int replay_width, int replay_height, std::string output_dir)
+void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, std::string output_dir)
 {
     if (frame_ctx_vector.empty())
     {
@@ -19,20 +20,6 @@ void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, int repla
 
     std::cout << "Number of captured frames: " << frame_ctx_vector.size() << std::endl;
 
-    // Setup
-    auto image = cairo_image_surface(replay_width,
-                                     replay_height);
-    auto rc = std::shared_ptr<rendering_context>(new rendering_context(image.get_surface(),
-                                                                        image.get_context(),
-                                                                        replay_width,
-                                                                        replay_height,
-                                                                        scale_ref_width,
-                                                                        scale_ref_height,
-                                                                        anti_aliasing::best));
-    auto wma_replay_scene = std::shared_ptr<scene>(new scene(scale_ref_width,
-                                                             scale_ref_height,
-                                                             rc,
-                                                             level_of_detail_replay));
     // Replay
     int64_t capture_time = 0;
     int64_t replay_time = 0;
@@ -50,11 +37,11 @@ void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, int repla
             // The replay timeline must have the same length so introduce an extra frame context
             // by interpolating between current and previous frame context
             auto interpol_frame_ctx = interpolate_frame(prev_frame_ctx, frame_ctx);
-            render_replay_frame(wma_replay_scene, interpol_frame_ctx, frame_number++, output_dir);
+            render_replay_frame(interpol_frame_ctx, frame_number++, output_dir);
             replay_time += frame_period;
         }
 
-        render_replay_frame(wma_replay_scene, frame_ctx, frame_number++, output_dir);
+        render_replay_frame(frame_ctx, frame_number++, output_dir);
         replay_time += frame_period;
 
         prev_frame_ctx = frame_ctx;
@@ -62,9 +49,9 @@ void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, int repla
 }
 
 
-void replay_handler::render_replay_frame(std::shared_ptr<scene> scene, frame_context& frame, size_t frame_number, std::string output_dir)
+void replay_handler::render_replay_frame(frame_context& frame, size_t frame_number, std::string output_dir)
 {
-    scene->draw(frame);
+    scene_->draw(frame);
 
     std::ostringstream path;
                 path << output_dir
@@ -75,7 +62,7 @@ void replay_handler::render_replay_frame(std::shared_ptr<scene> scene, frame_con
                      << "Generating " << path.str()
                       << std::endl;
 
-    scene->write_png(path.str());
+    scene_->write_png(path.str());
 }
 
 frame_context replay_handler::interpolate_frame(frame_context& prev_frame_ctx, frame_context& frame_ctx)

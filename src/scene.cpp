@@ -1,4 +1,4 @@
-#include "scene/scene.hpp"
+#include "scene.hpp"
 #include <unistd.h>
 #include <stdlib.h>
 #include <iostream>
@@ -13,7 +13,7 @@ scene::scene(double width, double height, std::shared_ptr<rendering_context> rc,
 , rc_(rc)
 , level_of_detail_(level_of_detail)
 {
-    objects_.emplace_back(object(width/2,height/2,width/2, width/2, rc_));
+
 }
 
 scene::~scene()
@@ -50,15 +50,7 @@ void scene::draw_bg()
 
 void scene::draw_main(frame_context& fc)
 {
-    rc_->set_source_rgb(0, 0, 0);
-    rc_->paint();
-
-    fc.scene_width = width_;
-    fc.scene_height = height_;
-
-    for(auto&& obj : objects_) {
-        obj.draw(fc);
-    }
+    std::cout << "scene::draw_main()" << std::endl;
 }
 
 void scene::draw_fg(frame_context& fc)
