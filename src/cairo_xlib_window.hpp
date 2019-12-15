@@ -26,10 +26,6 @@ enum class window_event_type
     close,
 };
 
-
-
-
-
 class window_event
 {
 public:

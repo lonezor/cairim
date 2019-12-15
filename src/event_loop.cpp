@@ -153,7 +153,9 @@ void event_loop::on_key_press(window_event& e)
 {
     auto c = e.get_c();
 
-    if (c == 'q') {
+    key_state_ = c;
+
+    if (c == 27) { // ESC
         std::cout << "User requested stop" << std::endl;
         exit_ = true;
     }
@@ -162,7 +164,7 @@ void event_loop::on_key_press(window_event& e)
 
 void event_loop::on_key_release(window_event& e)
 {
-
+    key_state_ = 0;
 }
 
 void event_loop::on_focus_in(window_event& e)
@@ -215,6 +217,7 @@ void event_loop::draw()
     fc.osd_visible = true;
     fc.screen_border = true;
     fc.button_state = button_state_;
+    fc.key_state = key_state_;
     fc.frame_rate = frame_rate_;
 
     draw_scene(fc);

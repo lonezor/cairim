@@ -95,7 +95,6 @@ public:
 
     void write_png(std::string path);
 
-
     double scale(double value);
 
 private:
@@ -106,7 +105,4 @@ private:
     int ref_width_;
     int ref_height_;
     anti_aliasing anti_aliasing_;
-
-    
-
 };

@@ -17,4 +17,5 @@ struct frame_context
     bool osd_visible;
     bool screen_border;
     button button_state;
+    char key_state; // zero for no key pressed
 };

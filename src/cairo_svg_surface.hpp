@@ -31,5 +31,5 @@ private:
     double req_height_;
     double center_x_;
     double center_y_;
-
 };
+

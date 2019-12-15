@@ -67,6 +67,7 @@ private:
     double frame_rate_{0};
     double window_event_poll_rate_;
     button button_state_{button::none};
+    char key_state_{0};
     double cursor_x_{0};
     double cursor_y_{0};
     bool exit_{false};
