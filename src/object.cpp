@@ -68,3 +68,23 @@ bool object::intersects(double x, double y)
 //{
 //
 //}
+
+double object::get_x()
+{
+    return x_;
+}
+
+double object::get_y()
+{
+    return y_;
+}
+
+double object::get_width()
+{
+    return width_;
+}
+
+double object::get_height()
+{
+    return height_;
+}

@@ -14,7 +14,7 @@ cairo_svg_surface::cairo_svg_surface(std::string path, double req_width, double 
 {
     read_from_svg_file(path);
 
-    std::cout << "cairo_svg_surface::cairo_svg_surface: " << path << std::endl;
+   // std::cout << "cairo_svg_surface::cairo_svg_surface: " << path << std::endl;
 }
 
 cairo_t* cairo_svg_surface::get_context()

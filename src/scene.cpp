@@ -26,7 +26,7 @@ void scene::draw(frame_context& fc)
     draw_begin();
     draw_bg();
     draw_main(fc);
-    draw_fg(fc);
+    //draw_fg(fc);
     draw_end();
 }
 

@@ -12,7 +12,10 @@ public:
     virtual ~object() {}
     virtual void draw(frame_context& fc) = 0;
 
-    
+    double get_x();
+    double get_y();
+    double get_width();
+    double get_height();
 
     virtual bool intersects(double x, double y);
    // virtual bool intersects(const object& other);
