@@ -13,10 +13,12 @@ object::object(double x, double y, double width, double height, std::shared_ptr<
 {
     // Load SVG and render it with high DPI and scale it down based on current need (heavy operation)
     // Scale width/height since cairo operations are delegated to third library instead of rendering ctx
-    svg_surface_ = new cairo_svg_surface(svg_path, rc_->scale(width_), rc_->scale(height_));
+    svg_surface_ = new cairo_svg_surface(svg_path,
+                                         rc_->scale(width_),
+                                         rc_->scale(height_));
 }
 
-void object::draw_svg_surface(double x, double y, double angle)
+void object::draw_svg_surface(double x, double y, double alpha, double angle)
 {
     // Restoration point before transformations
     rc_->save();
@@ -42,7 +44,10 @@ void object::draw_svg_surface(double x, double y, double angle)
     rc_->transform(&matrix);
 
     // Render SVG surface 
-    rc_->draw_surface(svg_surface_->get_surface(), -svg_surface_->get_center_x() , -svg_surface_->get_center_y());
+    rc_->draw_surface(svg_surface_->get_surface(), 
+                      -svg_surface_->get_center_x(),
+                      -svg_surface_->get_center_y(),
+                      alpha);
 
     // Revert transformation settings
     rc_->restore();
@@ -64,10 +69,10 @@ bool object::intersects(double x, double y)
             (y >= comp_y && y <= comp_y + height_*sf));
 }
 
-//bool object::intersects(const object& other)
-//{
-//
-//}
+bool object::intersects(const object& other)
+{
+    return false; // not purely virtual to make implementation optional
+}
 
 double object::get_x()
 {
@@ -88,3 +93,14 @@ double object::get_height()
 {
     return height_;
 }
+
+void object::set_x(double x)
+{
+    x_ = x;
+}
+
+void object::set_y(double y)
+{
+    y_ = y;
+}
+

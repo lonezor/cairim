@@ -2,17 +2,17 @@
 
 #include <stdint.h>
 
+// The scaling size is conceptually detached from capture size to allow
+// a scenario with rendering without captured user input
+constexpr int scale_ref_width = 1600;
+constexpr int scale_ref_height = 900;
+
 // Note: capture size must have the same aspect ratio as replay size
-constexpr int capture_width = 720;
-constexpr int capture_height = 408;
+constexpr int capture_width = scale_ref_width;
+constexpr int capture_height = scale_ref_height;
 constexpr int window_xpos = 100;
 constexpr int window_ypos = 100;
 constexpr auto window_title = "Cairim";
-
-// The scaling size is conceptually detached from capture size to allow
-// a scenario with rendering without captured user input
-constexpr int scale_ref_width = 720;
-constexpr int scale_ref_height = 408;
 
 constexpr int replay_width_1k = 1280;
 constexpr int replay_width_2k = 1920;

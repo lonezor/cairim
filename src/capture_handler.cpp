@@ -190,4 +190,6 @@ std::vector<frame_context> capture_handler::read_capture_file(std::string path)
     }
 
     file.close();
+
+    return frame_ctx_vector;
 }

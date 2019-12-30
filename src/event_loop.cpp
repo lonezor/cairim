@@ -129,7 +129,6 @@ void event_loop::on_refresh_screen()
 
 void event_loop::on_expose(window_event& e)
 {
-    printf("expose\n");
     draw();
 }
 
@@ -196,7 +195,10 @@ void event_loop::on_close(window_event& e)
 
 void event_loop::draw_scene(frame_context& fc)
 {
+    fc.screen_border = false;
+    
     scene_->draw(fc);
+    
     fc.osd_visible = true;
     fc.screen_border = true;
     capture_vector_.emplace_back(fc);

@@ -229,10 +229,10 @@ void rendering_context::draw_rc(rendering_context& rc, double x, double y)
     cairo_paint (cr_);
 }
 
-void rendering_context::draw_surface(cairo_surface_t* surface, double x, double y)
+void rendering_context::draw_surface(cairo_surface_t* surface, double x, double y, double alpha)
 {
     cairo_set_source_surface (cr_, surface, x, y);
-    cairo_paint (cr_);
+    cairo_paint_with_alpha (cr_, alpha);
 }
 
 double rendering_context::scale(double value)

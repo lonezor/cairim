@@ -26,7 +26,7 @@ void scene::draw(frame_context& fc)
     draw_begin();
     draw_bg();
     draw_main(fc);
-    //draw_fg(fc);
+    draw_fg(fc);
     draw_end();
 }
 
@@ -69,7 +69,6 @@ void scene::draw_fg(frame_context& fc)
     }
 
     if (fc.screen_border) {
-
         auto offset = rc_->scale(0.01);
         auto one_unit = rc_->scale(1.1);// 8k: 0.3
 
@@ -103,8 +102,6 @@ void scene::draw_fg(frame_context& fc)
     }
 }
 
-
-
 std::string scene::elapsed_time_str(int64_t elapsed_time) {
     elapsed_time /= 1000000; // to seconds
 
@@ -135,3 +132,4 @@ void scene::write_png(std::string path)
 {
     rc_->write_png(path);
 }
+

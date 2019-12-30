@@ -91,7 +91,7 @@ public:
 
     // Surface operations
     void draw_rc(rendering_context& rc, double x, double y);
-    void draw_surface(cairo_surface_t* surface, double x, double y);
+    void draw_surface(cairo_surface_t* surface, double x, double y, double alpha);
 
     void write_png(std::string path);
 

@@ -17,11 +17,14 @@ public:
     double get_width();
     double get_height();
 
+    void set_x(double x);
+    void set_y(double y);
+
     virtual bool intersects(double x, double y);
-   // virtual bool intersects(const object& other);
+    virtual bool intersects(const object& other);
 
 protected:
-    void draw_svg_surface(double x_center, double y_center, double angle);
+    void draw_svg_surface(double x_center, double y_center, double alpha, double angle);
 
     double x_;
     double y_;

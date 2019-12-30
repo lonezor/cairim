@@ -1,5 +1,6 @@
 
 #include "cairo_svg_surface.hpp"
+#include "constants.hpp"
 
 
 #include <fstream>
@@ -53,9 +54,6 @@ void cairo_svg_surface::read_from_svg_file(std::string path)
 
     GError* error = nullptr;
      
-    // Set high to accomodate any screen resolution
-    rsvg_set_default_dpi(600.0);
-
     rsvg_ = rsvg_handle_new_from_data((const guint8*)buffer.get(), (gsize)size, &error);
     
     if (error != nullptr)
@@ -63,6 +61,19 @@ void cairo_svg_surface::read_from_svg_file(std::string path)
         printf("Error: %s\n", error->message);
         return;
     }
+
+    // Set high DPI to accomodate any screen resolution up to 8k
+    // Scale it with respect to the actually needed resolution since
+    // this has a very significant effect on performance.
+    double prop = req_width_ / static_cast<double>(scale_ref_width);
+    double dpi = 660 * prop;
+    if (dpi < 1) {
+        dpi = 1;
+    }
+    if (dpi > 660) {
+        dpi = 660;
+    }
+    rsvg_handle_set_dpi(rsvg_, dpi);
 
     // Assumption: SVG object scaled to full width of the document
     rsvg_handle_get_dimensions(rsvg_, &dim_);
@@ -84,7 +95,7 @@ void cairo_svg_surface::read_from_svg_file(std::string path)
     cairo_scale(cr_, sx, sy);
 
     // Render SVG to cairo surface
-    rsvg_handle_render_cairo (rsvg_, cr_);
+    rsvg_handle_render_cairo(rsvg_, cr_);
 
     auto w =  cairo_image_surface_get_width (surface_);
     auto h = cairo_image_surface_get_height (surface_);

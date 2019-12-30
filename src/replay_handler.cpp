@@ -51,6 +51,11 @@ void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, std::stri
 
 void replay_handler::render_replay_frame(frame_context& frame, size_t frame_number, std::string output_dir)
 {
+    // Disable foreground for replay
+    frame.osd_visible = false;
+    frame.screen_border = false;
+    frame.cursor_visible = false;
+
     scene_->draw(frame);
 
     std::ostringstream path;
