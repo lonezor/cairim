@@ -11,11 +11,13 @@ object::object(double x, double y, double width, double height, std::shared_ptr<
  , rc_(rc)
  , svg_path_(svg_path)
 {
-    // Load SVG and render it with high DPI and scale it down based on current need (heavy operation)
-    // Scale width/height since cairo operations are delegated to third library instead of rendering ctx
-    svg_surface_ = new cairo_svg_surface(svg_path,
-                                         rc_->scale(width_),
-                                         rc_->scale(height_));
+    if (!svg_path.empty()) {
+        // Load SVG and render it with high DPI and scale it down based on current need (heavy operation)
+        // Scale width/height since cairo operations are delegated to third library instead of rendering ctx
+        svg_surface_ = new cairo_svg_surface(svg_path,
+                                             rc_->scale(width_),
+                                             rc_->scale(height_));
+    }
 }
 
 void object::draw_svg_surface(double x, double y, double alpha, double angle)
