@@ -98,8 +98,8 @@ public:
     double scale(double value);
 
 private:
-    cairo_t* cr_;
-    cairo_surface_t* surface_;
+    cairo_t* cr_{nullptr};
+    cairo_surface_t* surface_{nullptr};
     int screen_width_;
     int screen_height_;
     int ref_width_;

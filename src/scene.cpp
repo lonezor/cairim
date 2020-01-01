@@ -70,7 +70,7 @@ void scene::draw_fg(frame_context& fc)
 
     if (fc.screen_border) {
         auto offset = rc_->scale(0.01);
-        auto one_unit = rc_->scale(1.1);// 8k: 0.3
+        auto one_unit = rc_->scale(1.1); // 8k: 0.3
 
         rc_->set_source_rgba(1, 1, 1, 1);
         rc_->move_to(offset,offset);
