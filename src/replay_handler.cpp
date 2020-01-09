@@ -75,17 +75,7 @@ void replay_handler::render_replay_frame(frame_context& frame, size_t frame_numb
     frame.cursor_visible = false;
 
     scene_->draw(frame);
-
-    std::ostringstream path;
-                path << output_dir
-                     << "/out_" 
-                     << std::fixed << std::setw(6) << std::setfill('0') << frame_number << ".png";
-
-    std::cout << std::fixed << std::setprecision(6)
-                     << "Generating " << path.str()
-                      << std::endl;
-
-    scene_->write_png(path.str());
+    scene_->generate_png();
 }
 
 frame_context replay_handler::interpolate_frame(frame_context& prev_frame_ctx, frame_context& frame_ctx)

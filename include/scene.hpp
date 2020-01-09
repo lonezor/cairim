@@ -33,7 +33,7 @@ class scene
         virtual ~scene();
 
         void draw(frame_context& fc);
-        void write_png(std::string path);
+        void generate_png();
     protected:
         std::shared_ptr<rendering_context> rc_;
         double width_;

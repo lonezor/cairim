@@ -146,8 +146,8 @@ std::string scene::elapsed_time_str(int64_t elapsed_time) {
     return oss.str();
 }
 
-void scene::write_png(std::string path)
+void scene::generate_png()
 {
-    rc_->write_png(path);
+    rc_->generate_png();
 }
 

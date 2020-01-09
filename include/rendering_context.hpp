@@ -20,6 +20,9 @@
 
 #include <cairo.h>
 #include <string>
+#include <memory>
+
+#include "png_generator.hpp"
 
 enum class anti_aliasing
 {
@@ -47,7 +50,8 @@ constexpr double m_pi = 3.14159265358979323846;
 class rendering_context
 {
 public:
-    rendering_context(cairo_surface_t* surface, cairo_t* cr, int screen_width, int screen_height, int ref_width, int ref_height, anti_aliasing anti_aliasing);
+    rendering_context(cairo_surface_t* surface, cairo_t* cr, int screen_width, int screen_height, 
+    int ref_width, int ref_height, anti_aliasing anti_aliasing, std::shared_ptr<png_generator> png_generator);
     rendering_context(cairo_surface_t* surface, cairo_t* cr, rendering_context& reference);
     
     void init(anti_aliasing anti_aliasing);
@@ -110,7 +114,7 @@ public:
     void draw_rc(rendering_context& rc, double x, double y);
     void draw_surface(cairo_surface_t* surface, double x, double y, double alpha);
 
-    void write_png(std::string path);
+    void generate_png();
 
     double scale(double value);
 
@@ -122,4 +126,5 @@ private:
     int ref_width_;
     int ref_height_;
     anti_aliasing anti_aliasing_;
+    std::shared_ptr<png_generator> png_generator_{nullptr};
 };

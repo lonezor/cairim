@@ -18,7 +18,8 @@
 
 #include "rendering_context.hpp"
 
-rendering_context::rendering_context(cairo_surface_t* surface, cairo_t* cr, int screen_width, int screen_height, int ref_width, int ref_height, anti_aliasing anti_aliasing)
+rendering_context::rendering_context(cairo_surface_t* surface, cairo_t* cr, int screen_width, int screen_height, 
+int ref_width, int ref_height, anti_aliasing anti_aliasing, std::shared_ptr<png_generator> png_generator)
  : surface_(surface)
  , cr_(cr)
  , screen_width_(screen_width)
@@ -26,8 +27,11 @@ rendering_context::rendering_context(cairo_surface_t* surface, cairo_t* cr, int 
  , ref_width_(ref_width)
  , ref_height_(ref_height)
  , anti_aliasing_(anti_aliasing)
+ , png_generator_(png_generator)
 {
     init(anti_aliasing);
+
+    
 }
 
 rendering_context::rendering_context(cairo_surface_t* surface, cairo_t* cr, rendering_context& reference)
@@ -271,7 +275,22 @@ void rendering_context::restore()
     cairo_restore(cr_);
 }
 
-void rendering_context::write_png(std::string path)
+void rendering_context::generate_png()
 {
-    cairo_surface_write_to_png(surface_, path.c_str());
+    if (png_generator_ == nullptr) {
+        return;
+    }
+
+    // Take a snapshot of the surface that soon will be
+    // used for the next frame. PNG writing can be very
+    // heavy so ensure to wait for the workers to keep
+    // up if the queue gets too big
+    png_generator_->append_work_queue(surface_);
+    
+    auto concurrency = png_generator_->get_concurrency();
+    auto queue_size = png_generator_->get_queue_size();
+    while (queue_size > 4 * concurrency) {
+        std::this_thread::sleep_for (std::chrono::milliseconds(50));
+       queue_size = png_generator_->get_queue_size();
+    }
 }
