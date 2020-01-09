@@ -52,6 +52,7 @@ constexpr uint64_t level_of_detail_capture = 1000;
 constexpr uint64_t level_of_detail_replay = 500000;
 
 constexpr auto default_output_dir = "/tmp/cairim/";
+constexpr auto default_png_dir = "/home/png";
 constexpr auto default_capture_file = "default.cap";
 
 constexpr uint64_t capture_file_magic = 0xf5b24398771e0201;

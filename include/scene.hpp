@@ -34,6 +34,9 @@ class scene
 
         void draw(frame_context& fc);
         void generate_png();
+
+        std::shared_ptr<rendering_context> get_rc();
+
     protected:
         std::shared_ptr<rendering_context> rc_;
         double width_;

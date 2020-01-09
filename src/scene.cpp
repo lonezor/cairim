@@ -39,6 +39,11 @@ scene::~scene()
 
 }
 
+std::shared_ptr<rendering_context> scene::get_rc()
+{
+    return rc_;
+}
+
 void scene::draw(frame_context& fc)
 {
     draw_begin();

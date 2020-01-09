@@ -29,7 +29,7 @@ replay_handler::replay_handler(std::shared_ptr<scene> scene)
 
 }
 
-void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, std::string output_dir)
+void replay_handler::run(std::vector<frame_context>& frame_ctx_vector)
 {
     if (frame_ctx_vector.empty())
     {
@@ -55,11 +55,11 @@ void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, std::stri
             // The replay timeline must have the same length so introduce an extra frame context
             // by interpolating between current and previous frame context
             auto interpol_frame_ctx = interpolate_frame(prev_frame_ctx, frame_ctx);
-            render_replay_frame(interpol_frame_ctx, frame_number++, output_dir);
+            render_replay_frame(interpol_frame_ctx, frame_number++);
             replay_time += frame_period;
         }
 
-        render_replay_frame(frame_ctx, frame_number++, output_dir);
+        render_replay_frame(frame_ctx, frame_number++);
         replay_time += frame_period;
 
         prev_frame_ctx = frame_ctx;
@@ -67,7 +67,7 @@ void replay_handler::run(std::vector<frame_context>& frame_ctx_vector, std::stri
 }
 
 
-void replay_handler::render_replay_frame(frame_context& frame, size_t frame_number, std::string output_dir)
+void replay_handler::render_replay_frame(frame_context& frame, size_t frame_number)
 {
     // Disable foreground for replay
     frame.osd_visible = false;
