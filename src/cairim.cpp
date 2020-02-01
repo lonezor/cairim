@@ -12,7 +12,7 @@ int cairim_main(int argc, char* argv[], std::shared_ptr<cairo_xlib_window> windo
     auto frame_ctx_vector = cap_handler.run();
 
     // Replay user input and render high resolution output
-    auto rep_handler = replay_handler(replay_scene);
+    auto rep_handler = replay_handler(replay_scene, show_cursor);
     rep_handler.run(frame_ctx_vector);
 
     return 0;

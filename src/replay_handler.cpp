@@ -23,8 +23,9 @@
 #include "scene.hpp"
 #include "common.hpp"
 
-replay_handler::replay_handler(std::shared_ptr<scene> scene)
+replay_handler::replay_handler(std::shared_ptr<scene> scene, bool cursor_visible)
  : scene_(scene)
+ , cursor_visible_(cursor_visible)
 {
 
 }
@@ -72,7 +73,7 @@ void replay_handler::render_replay_frame(frame_context& frame, size_t frame_numb
     // Disable foreground for replay
     frame.osd_visible = false;
     frame.screen_border = false;
-    frame.cursor_visible = false;
+    frame.cursor_visible = cursor_visible_;
 
     scene_->draw(frame);
     scene_->generate_png();
